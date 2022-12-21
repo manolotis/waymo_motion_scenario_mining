@@ -1,4 +1,4 @@
-absl==0.0
+#absl==0.0
 absl_py==1.2.0
 immutabledict==2.2.3
 importlib_resources==5.9.0
@@ -14,8 +14,8 @@ rich==12.6.0
 scipy==1.9.1
 Shapely==1.8.4
 six==1.16.0
-skimage==0.0
+#skimage==0.0
 tensorflow_graphics==2021.12.3
-torch==1.13.1
-torchvision==0.14.1
-wxauto==3.3.5.3
+#torch==1.13.1
+#torchvision==0.14.1
+#wxauto==3.3.5.3

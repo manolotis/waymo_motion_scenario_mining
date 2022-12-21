@@ -13,7 +13,8 @@ log/
 deprecated/
 @Automation*
 *.bat
-
+.idea
+result
 
 
 

@@ -36,6 +36,7 @@ TTC_2 = 9
 bbox_extension = 2 # extend length and width of the bbox by 2 times
 
 def generate_tags(DATADIR,FILE:str):
+    print("\t", FILE, "Generating lanes...")
     static_element = generate_lanes(DATADIR,FILE)
     lane_key = ['freeway','surface_street','bike_lane']
     other_object_key = ['cross_walk','speed_bump']
@@ -46,6 +47,7 @@ def generate_tags(DATADIR,FILE:str):
     actors_list = {} #[actor_type]
     AgentExtendedPolygons = namedtuple('AgentExtendedPolygons','type,key,etp,ebb,length')
     agent_pp_state_list = []
+    print("\t", FILE, "Lane generation finished")
     for actor_type in actor_dict:
         agent_type = actor_dict[actor_type]
         agent_list = get_agent_list(agent_type,DATADIR,FILE)
