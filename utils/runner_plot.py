@@ -6,6 +6,7 @@ from plotting_scenarios import plot_all_scenarios
 from logger.logger import *
 from pathlib import Path
 import glob
+from multiprocessing import Pool
 
 # working directory
 ROOT = Path(__file__).parent.parent
@@ -46,6 +47,13 @@ argparser.add_argument(
     help='#result time to plot.e.g.:11-09-09_25'
 )
 
+argparser.add_argument(
+    '-n', '--n-jobs',
+    type=int,
+    help='Number of processes',
+    default=4
+)
+
 args = argparser.parse_args()
 
 # modify the following two lines to your own data,figures, and result directory
@@ -68,9 +76,38 @@ def get_all_file_numbers(args):
     return file_numbers
 
 
-if __name__ == "__main__":
-
+def process_file(file_number):
     RESULT_TIME = f"{args.result_time}"
+    start = time.perf_counter()
+    if "train" in args.data:
+        FILE = f"training_tfexample.tfrecord-{file_number}-of-01000"
+    else:
+        FILE = f"validation_tfexample.tfrecord-{file_number}-of-00150"
+
+    RESULT_FILENAME = f'Waymo_{file_number}_{RESULT_TIME}_tag.json'
+    RESULT_SOLO = f'Waymo_{file_number}_{RESULT_TIME}_solo.json'
+    # sanity check
+    FILENAME = os.path.join(DATADIR, FILE)
+    print("attempting ", FILENAME)
+    if os.path.exists(FILENAME):
+        print(f"Plotting:{FILE}")
+        try:
+            _ = plot_all_scenarios(DATADIR, FILE, file_number, RESULTDIR, RESULT_FILENAME, RESULT_SOLO, FIGDIR)
+
+        except Exception as e:
+            print(e)
+            raise e
+            logger.error(f"FILE: {file_number}.{e}")
+    else:
+        print(f"File not found:{FILE}")
+        print(f"Filename not found:{FILENAME}")
+
+        logger.info(f"File not found:{FILENAME}")
+    end = time.perf_counter()
+    logger.info(f"DATA:{file_number}.JSON:{RESULT_SOLO}.Run time: {end - start}")
+
+
+if __name__ == "__main__":
 
     if args.filenum == "all":
         file_numbers = get_all_file_numbers(args)
@@ -78,31 +115,7 @@ if __name__ == "__main__":
     else:
         file_numbers = [args.file_number]
 
-    for file_number in file_numbers:
-        start = time.perf_counter()
-        if "train" in args.data:
-            FILE = f"training_tfexample.tfrecord-{file_number}-of-01000"
-        else:
-            FILE = f"validation_tfexample.tfrecord-{file_number}-of-00150"
-
-        RESULT_FILENAME = f'Waymo_{file_number}_{RESULT_TIME}_tag.json'
-        RESULT_SOLO = f'Waymo_{file_number}_{RESULT_TIME}_solo.json'
-        # sanity check
-        FILENAME = os.path.join(DATADIR, FILE)
-        print("attempting ", FILENAME)
-        if os.path.exists(FILENAME):
-            print(f"Plotting:{FILE}")
-            try:
-                _ = plot_all_scenarios(DATADIR, FILE, file_number, RESULTDIR, RESULT_FILENAME, RESULT_SOLO, FIGDIR)
-
-            except Exception as e:
-                print(e)
-                raise e
-                logger.error(f"FILE: {file_number}.{e}")
-        else:
-            print(f"File not found:{FILE}")
-            print(f"Filename not found:{FILENAME}")
-
-            logger.info(f"File not found:{FILENAME}")
-        end = time.perf_counter()
-        logger.info(f"DATA:{file_number}.JSON:{RESULT_SOLO}.Run time: {end - start}")
+    pool = Pool(args.n_jobs)
+    processes = []
+    pool.map(process_file, file_numbers)
+    pool.close()
