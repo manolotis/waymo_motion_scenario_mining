@@ -2,6 +2,8 @@
 Generate scenarios from a folder contains multiple WAYMO data records
 Author: Detian Guo
 Date: 04/11/2022
+
+Some extra additions by Manuel Muñoz Sánchez on 05/05/2023 to run on entire dataset
 """
 import argparse
 import json
@@ -16,6 +18,10 @@ from logger.logger import *
 from scenario_miner import ScenarioMiner
 from tags_generator import TagsGenerator
 from warnings import simplefilter
+
+import argparse
+from multiprocessing import Pool
+
 simplefilter('error')
 
 parser = argparse.ArgumentParser()
@@ -24,17 +30,31 @@ parser.add_argument('--ext_data',action="store_true" ,help='[bool] True for usin
 parser.add_argument('--specified_file', type=str, required=False, help='specify a data to process')
 parser.add_argument('--result_folder', type=str, required=False, help='result time to be categorized, e.g. 02-28-16_35')
 parser.add_argument('--start_file', type=str, required=False, help='start file to process')
-eval_mode = parser.parse_args().eval_mode
-ext_data = parser.parse_args().ext_data
-result_folder = parser.parse_args().result_folder
-specified_file = parser.parse_args().specified_file
-start_file = parser.parse_args().start_file
+parser.add_argument(
+    '-d', '--data',
+    type=str,
+    help='Directory to waymo raw data',
+    required=True
+)
+parser.add_argument(
+    '-n', '--n-jobs',
+    type=int,
+    help='Number of processes',
+    default=4
+)
+args = parser.parse_args()
+eval_mode = args.eval_mode
+ext_data = args.ext_data
+result_folder = args.result_folder
+specified_file = args.specified_file
+start_file = args.start_file
 # working directory 
 # resolve() is to get the absolute path
 ROOT = Path(__file__).resolve().parent.parent
 
 # modify the following two lines to your own data and result directory
-DATA_DIR = ROOT / "waymo_open_dataset" / "data" / "tf_example" / "training"
+DATA_DIR = Path(args.data)
+
 if ext_data:
     DATA_DIR = Path("F:/VRU_prediction_dataset/waymo")
 
@@ -44,9 +64,59 @@ if eval_mode:
 DATA_DIR_WALK = DATA_DIR.iterdir()
 
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--file', type=str, required=True, help='#file to plot.e.g.:00003')
-# args = parser.parse_args()
+def process_file(DATA_PATH):
+    FILE = DATA_PATH.name
+    if eval_mode and not FILE.endswith(".pkl"):
+        return
+    if specified_file and specified_file != FILE:
+        print(f"Skipping file: {FILE}.")
+        return
+    FILENUM = re.search(r"-(\d{5})-", FILE)
+    if FILENUM is not None:
+        FILENUM = FILENUM.group()[1:-1]
+        print(f"Processing file: {FILE}.")
+    else:
+        print(f"File name error: {FILE}.")
+        return
+    result_dict = {}
+    try:
+        # parsing data
+        if eval_mode:
+            parsed = get_parsed_carla_data(DATA_DIR / FILE)
+            fileprefix = FILE.split('-')[0]
+        else:
+            fileprefix = 'Waymo'
+            dataset = tf.data.TFRecordDataset(DATA_DIR / FILE, compression_type='')
+            for data in dataset.as_numpy_iterator():
+                parsed = tf.io.parse_single_example(data, features_description)
+                scene_id = parsed['scenario/id'].numpy().item().decode("utf-8")
+                print(f"Processing scene: {scene_id}.")
+                result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_tag.json'
+                #   tagging
+                tags_generator = TagsGenerator()
+                general_info, \
+                    inter_actor_relation, \
+                    actors_activity, \
+                    actors_environment_element_intersection = tags_generator.tagging(parsed, FILE)
+                result_dict = {
+                    'general_info': general_info,
+                    'inter_actor_relation': inter_actor_relation,
+                    'actors_activity': actors_activity,
+                    'actors_environment_element_intersection': actors_environment_element_intersection
+                }
+                with open(RESULT_DIR / result_filename, 'w') as f:
+                    print(f"Saving tags.")
+                    json.dump(result_dict, f)
+                scenario_miner = ScenarioMiner()
+                solo_scenarios = scenario_miner.mining(result_dict)
+                result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_solo.json'
+                with open(RESULT_DIR / result_filename, 'w') as f:
+                    print(f"Saving solo scenarios.")
+                    json.dump(solo_scenarios, f)
+    except Exception as e:
+        trace = traceback.format_exc()
+        logger.error(f"FILE:{FILENUM}.\nTag generation error:{e}")
+        logger.error(f"trace:{trace}")
 
 if __name__ == '__main__':
     if result_folder:
@@ -57,59 +127,11 @@ if __name__ == '__main__':
     if not RESULT_DIR.exists():
         RESULT_DIR.mkdir(exist_ok=True, parents=True)
     time_start = time.perf_counter()
-    for DATA_PATH in track(DATA_DIR_WALK, description="Processing files"):
-        FILE = DATA_PATH.name
-        if eval_mode and not FILE.endswith(".pkl"):
-            continue
-        if specified_file and specified_file != FILE:
-            print(f"Skipping file: {FILE}.")
-            continue
-        FILENUM = re.search(r"-(\d{5})-", FILE)
-        if FILENUM is not None:
-            FILENUM = FILENUM.group()[1:-1]
-            print(f"Processing file: {FILE}.")
-        else:
-            print(f"File name error: {FILE}.")
-            continue
-        result_dict = {}
-        try:
-            # parsing data
-            if eval_mode:
-                parsed = get_parsed_carla_data(DATA_DIR / FILE)
-                fileprefix = FILE.split('-')[0]
-            else:
-                fileprefix = 'Waymo'
-                dataset = tf.data.TFRecordDataset(DATA_DIR / FILE, compression_type='')
-                for data in dataset.as_numpy_iterator():
-                    parsed = tf.io.parse_single_example(data, features_description)
-                    scene_id = parsed['scenario/id'].numpy().item().decode("utf-8")
-                    print(f"Processing scene: {scene_id}.")
-                    result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_tag.json'
-                    #   tagging
-                    tags_generator = TagsGenerator()
-                    general_info, \
-                    inter_actor_relation, \
-                    actors_activity, \
-                    actors_environment_element_intersection = tags_generator.tagging(parsed,FILE)
-                    result_dict = {
-                        'general_info': general_info,
-                        'inter_actor_relation': inter_actor_relation,
-                        'actors_activity': actors_activity,
-                        'actors_environment_element_intersection': actors_environment_element_intersection
-                    }
-                    with open(RESULT_DIR / result_filename, 'w') as f:
-                        print(f"Saving tags.")
-                        json.dump(result_dict, f)
-                    scenario_miner = ScenarioMiner()
-                    solo_scenarios = scenario_miner.mining(result_dict)
-                    result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_solo.json'
-                    with open(RESULT_DIR / result_filename, 'w') as f:
-                        print(f"Saving solo scenarios.")
-                        json.dump(solo_scenarios, f)
-        except Exception as e:
-            trace = traceback.format_exc()
-            logger.error(f"FILE:{FILENUM}.\nTag generation error:{e}")
-            logger.error(f"trace:{trace}")
+    print("Args", args)
+    pool = Pool(args.n_jobs)
+    processes = []
+    pool.map(process_file, DATA_DIR_WALK)
+    pool.close()
     ############################################################################
     # messager for finishing one data record. Comment out this if you don't use weChat
     # wechatter(f"FILE:{FILENUM} finished.")
