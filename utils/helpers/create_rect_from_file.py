@@ -12,10 +12,16 @@ import time
 import numpy as np
 
 
-def get_parsed_data(data_path):
+def get_parsed_data(data_path, scene_id=None):
     dataset = tf.data.TFRecordDataset(data_path, compression_type='')
-    data = next(dataset.as_numpy_iterator())
-    parsed = tf.io.parse_single_example(data, features_description)
+    if scene_id is None:
+        data = next(dataset.as_numpy_iterator())
+        parsed = tf.io.parse_single_example(data, features_description)
+    for data in dataset.as_numpy_iterator():
+        parsed = tf.io.parse_single_example(data, features_description)
+        if scene_id == parsed['scenario/id'].numpy().item().decode("utf-8"):
+            return parsed
+    raise ValueError("Scene ID not found")
     return parsed
 
 def get_parsed_carla_data(data_path):

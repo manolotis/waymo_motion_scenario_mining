@@ -1,5 +1,6 @@
 font1 = {'family' : 'Times New Roman','weight' : 'normal','size':20}
 font2 = {'family' : 'Times New Roman','weight' : 'normal','size':50}
+font3 = {'family' : 'Times New Roman','weight' : 'normal','size':8}
 lane_color = {
     'freeway':'k',
     'surface_street':'slategray',

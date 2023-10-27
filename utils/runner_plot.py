@@ -11,7 +11,7 @@ from plotting_scenarios import plot_all_scenarios
 # working directory
 ROOT = Path(__file__).parent.parent
 
-RESULTDIR = ROOT / "results" / "gp1"
+RESULTDIR = ROOT / "results"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--filenum', type=str, required=True, help='#file to plot.e.g.:00003')
