@@ -97,6 +97,7 @@ if __name__ == '__main__':
     time_start = time.perf_counter()
 
     for data_path in DATA_DIR_WALK:
+        print("Processing ", data_path)
         process_file(data_path)
 
     time_end = time.perf_counter()
