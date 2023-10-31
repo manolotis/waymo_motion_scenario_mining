@@ -8,7 +8,8 @@ from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
 from environ_elements import EnvironmentElementsWaymo
-from helpers.create_rect_from_file import get_agent_list, actor_creator, get_parsed_data, get_parsed_carla_data
+from helpers.create_rect_from_file import get_agent_list, actor_creator, get_parsed_data, get_parsed_carla_data, \
+    get_agent_id_list
 from helpers.helper_func import exchange_key_value
 from lateral_act_detector import LatActDetector
 from logger.logger import *
@@ -22,7 +23,8 @@ simplefilter('error')
 class TagsGenerator:
     def __init__(self):
         self.tags = {
-            'actors_list': [],
+            'actors_list': [],  # indexes
+            'actors_ids_list': [],  # original waymo ids
             'inter_actor_relation': [],
             'actors_activity': [],
             'actors_environment_element_intersection': []
@@ -44,12 +46,16 @@ class TagsGenerator:
         # [actor_type][actor_id][lane_type][expanded/trajectory],value is a list of area of intersection
         actors_environment_element_intersection = {}
         actors_list = {}  # [actor_type]
+        actors_ids_list = {}  # [actor_type]
         AgentExtendedPolygons = namedtuple('AgentExtendedPolygons', 'type,key,etp,ebb,length,x,y,theta')
         agent_pp_state_list = []
         sampling_threshold = 0.0  # default value
         for actor_type in actor_dict:
+            print("actor_type", actor_type)
             agent_type = actor_dict[actor_type]
             agent_list = get_agent_list(agent_type, parsed, eval_mode=eval_mode)
+            agent_id_list = get_agent_id_list(agent_type, parsed, eval_mode=eval_mode)
+
             ##############################################
             actor_activity = {}
             actor_environment_element_intersection = {}
@@ -307,6 +313,15 @@ class TagsGenerator:
                 actors_list[actor_type] = agent_list_2
             else:
                 actors_list[actor_type] = agent_list_2.tolist()
+
+            if isinstance(agent_id_list, list):
+                actors_ids_list[actor_type] = agent_id_list
+            else:
+                actors_ids_list[actor_type] = agent_id_list.tolist()
+                # if still not a list, it was a single numpy elemn
+                if isinstance(actors_ids_list[actor_type], int):
+                    actors_ids_list[actor_type] = [actors_ids_list[actor_type]]
+
             actors_activity[actor_type] = actor_activity
             actors_environment_element_intersection[actor_type] = actor_environment_element_intersection
         ########### inter actor relation ###########
@@ -317,6 +332,7 @@ class TagsGenerator:
         })
         general_info = {
             'actors_list': actors_list,
+            'actors_ids_list': actors_ids_list,
             'tagging_parameters': tags_param,
         }
         return general_info, inter_actor_relation, actors_activity, actors_environment_element_intersection

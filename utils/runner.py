@@ -5,6 +5,7 @@ Date: 04/11/2022
 """
 import argparse
 import json
+import os.path
 import re
 import time
 import traceback
@@ -25,6 +26,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, required=True, help='Absolute path to the data directory')
 parser.add_argument('--results_dir', type=str, required=True, help='Relative path to the results')
 parser.add_argument('--n_jobs', type=int, default=8, required=False, help='Number of processes')
+parser.add_argument('--remake', type=bool, default=False, required=False, help='If False, it skips tagging scenes that are already in the results folder')
 
 # working directory 
 ROOT = Path(__file__).parents[1]
@@ -42,6 +44,11 @@ def process_scenario(data, fileprefix, FILENUM, FILE):
         scene_id = parsed['scenario/id'].numpy().item().decode("utf-8")
         print(f"Processing scene: {scene_id}.")
         result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_tag.json'
+        savepath = RESULT_DIR / result_filename
+        if not args.remake and os.path.exists(savepath) and os.path.getsize(savepath) > 0:
+            print(f"Nonempty {result_filename} found. Skipping... To re-tag, set --remake to True")
+            return
+
         #   tagging
         tags_generator = TagsGenerator()
         general_info, \
@@ -54,7 +61,7 @@ def process_scenario(data, fileprefix, FILENUM, FILE):
             'actors_activity': actors_activity,
             'actors_environment_element_intersection': actors_environment_element_intersection
         }
-        with open(RESULT_DIR / result_filename, 'w') as f:
+        with open(savepath, 'w') as f:
             print(f"Saving tags.")
             json.dump(result_dict, f)
     except Exception as e:

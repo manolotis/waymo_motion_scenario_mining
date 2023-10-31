@@ -157,6 +157,7 @@ for sc in track(scenario_categories):
 
         for scenario_index, scenario_info in scene_scenarios.items():
             host_id, guest_id = int(scenario_info["host_actor"]), int(scenario_info["guest_actor"])
+            host_idx, guest_idx = int(scenario_info["host_actor_id"]), int(scenario_info["guest_actor_id"])
             host_actor, _ = actor_creator(sc2types[sc]["host_type"], host_id, parsed)
             guest_actor, _ = actor_creator(sc2types[sc]["guest_type"], guest_id, parsed)
 
@@ -194,7 +195,9 @@ for sc in track(scenario_categories):
                                     guest_text="", cbo="vertical")
             # ax.ticklabel_format(style='sci',scilimits=(-1,1),axis='both')
             FIG_PATH = ROOT / "figures" / "testing"
+            if not os.path.exists(FIG_PATH):
+                os.makedirs(FIG_PATH)
             plt.tight_layout()
-            plt.savefig(FIG_PATH / f"{sc}_{scene_id}_h{host_id}_g{guest_id}.png", dpi=300)
+            plt.savefig(FIG_PATH / f"{sc}_{scene_id}_h{host_id}_{host_idx}_g{guest_id}_{guest_idx}.png", dpi=300)
             # plt.show()
             plt.close()

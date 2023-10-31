@@ -45,6 +45,7 @@ def process_result_file(result_file, SC_ID):
 
 def categorize_all_sc(result_dir):
     for SC_ID in track(sc, description="Categorizing..."):
+        print(SC_ID)
         pool = Pool(args.n_jobs)
         pool.starmap(process_result_file, zip(result_dir.iterdir(), itertools.repeat(SC_ID)))
         pool.close()

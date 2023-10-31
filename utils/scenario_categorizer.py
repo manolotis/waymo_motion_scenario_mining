@@ -13,6 +13,8 @@ class ScenarioCategorizer:
 
     def __init__(self, result_dict: dict):
         self.actors_list = result_dict['general_info']['actors_list']
+        self.actors_ids_list = result_dict['general_info']['actors_ids_list']
+        self.actor_idx2actor_id = self._make_actor_index2actor_id_map()
         self.inter_actor_relation = result_dict['inter_actor_relation']
         self.actors_activity = result_dict['actors_activity']
         self.actors_environment_element_intersection = result_dict['actors_environment_element_intersection']
@@ -27,7 +29,7 @@ class ScenarioCategorizer:
         SC_result = {}
         SC_count = 0
         for host_actor_type in SC.host_actor_type:
-            for host_actor_id in self.actors_list[host_actor_type]:
+            for i, host_actor_id in enumerate(self.actors_list[host_actor_type]):
                 time_stamp = self._check_actor_activity(SC, host_actor_type, host_actor_id, host=True)
                 #####   encode host environment relation   #####
                 time_stamp *= self._check_actor_envr_relation(SC, host_actor_type, host_actor_id, time_stamp)
@@ -40,8 +42,10 @@ class ScenarioCategorizer:
                     time_stamp_result = np.where(time_stamp == 1)[0]
                     SC_result[SC_count] = {
                         'SC_ID': scenario_category_ID,
-                        'host_actor': host_actor_id,
+                        'host_actor': int(host_actor_id),
+                        'host_actor_id': int(self.actor_idx2actor_id[host_actor_id]), # id in waymo data
                         'guest_actor': "None",
+                        'guest_actor_id': "None", # id in waymo data
                         'envr_type': SC.host_actor_tag['road_type'] if len(SC.host_actor_tag['road_type']) else "None",
                         'time_stamp': time_stamp_result.tolist()
                     }
@@ -86,12 +90,16 @@ class ScenarioCategorizer:
                         continue
                     else:
                     #####   result #####
+                        host_actor_id = int(host_actor_id)
+                        guest_actor_id = int(guest_actor_id)
                         SC_count += 1
                         time_stamp_result = np.where(time_stamp * time_stamp_g == 1)[0]
                         SC_result[SC_count] = {
                             'SC_ID': scenario_category_ID,
-                            'host_actor': host_actor_id,
-                            'guest_actor': guest_actor_id,
+                            'host_actor': int(host_actor_id),
+                            'host_actor_id': int(self.actor_idx2actor_id[host_actor_id]),  # id in waymo data
+                            'guest_actor': int(guest_actor_id),
+                            'guest_actor_id': int(self.actor_idx2actor_id[guest_actor_id]),  # id in waymo data
                             'envr_type': SC.host_actor_tag['road_type'] if len(SC.host_actor_tag['road_type']) else "None",
                             'time_stamp': time_stamp_result.tolist()
                         }
@@ -199,3 +207,10 @@ class ScenarioCategorizer:
         split_index = np.where(np.diff(target_index) > 1)[
                           0] + 1  # split where the index of needed value is not continuous
         return flag, np.split(target_index, split_index)
+
+    def _make_actor_index2actor_id_map(self):
+        mapping = {}
+        for actor_type, actor_list in self.actors_list.items():
+            for i, actor_index in enumerate(actor_list):
+                mapping[int(actor_index)] = int(self.actors_ids_list[actor_type][i])
+        return mapping

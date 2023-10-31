@@ -37,6 +37,16 @@ def get_agent_list(agent_type:int,parsed,eval_mode=False):
         return np.where(parsed['state/type'].squeeze()==agent_type)[0]
     else:
         return tf.where(parsed['state/type']==agent_type).numpy().squeeze()
+def get_agent_id_list(agent_type:int,parsed,eval_mode=False):
+    # a tensor for corresponding agent type
+    if eval_mode:
+        agent_index = np.where(parsed['state/type'].squeeze()==agent_type)[0]
+        agent_id = parsed['state/id'].squeeze()[agent_index]
+        return agent_id
+    else:
+        agent_index = tf.where(parsed['state/type']==agent_type).numpy().squeeze()
+        agent_id = tf.gather(parsed['state/id'], agent_index).numpy().astype(int)
+        return agent_id
 
 def actor_creator(agent_type:int, choice:int,parsed:dict, eval_mode:bool=False):
     """
