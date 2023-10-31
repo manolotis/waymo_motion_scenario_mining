@@ -26,7 +26,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, required=True, help='Absolute path to the data directory')
 parser.add_argument('--results_dir', type=str, required=True, help='Relative path to the results')
 parser.add_argument('--n_jobs', type=int, default=8, required=False, help='Number of processes')
-parser.add_argument('--remake', type=bool, default=False, required=False, help='If False, it skips tagging scenes that are already in the results folder')
+parser.add_argument('--remake', type=bool, default=False, required=False,
+                    help='If False, it skips tagging scenes that are already in the results folder')
 
 # working directory 
 ROOT = Path(__file__).parents[1]
@@ -42,7 +43,7 @@ def process_scenario(data, fileprefix, FILENUM, FILE):
     try:
         parsed = tf.io.parse_single_example(data, features_description)
         scene_id = parsed['scenario/id'].numpy().item().decode("utf-8")
-        print(f"Processing scene: {scene_id}.")
+        print(f"Processing scene: {scene_id} | Filenum: {FILENUM}.")
         result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_tag.json'
         savepath = RESULT_DIR / result_filename
         if not args.remake and os.path.exists(savepath) and os.path.getsize(savepath) > 0:
@@ -70,42 +71,43 @@ def process_scenario(data, fileprefix, FILENUM, FILE):
         logger.error(f"trace:{trace}")
 
 
-def process_file(DATA_PATH):
-    FILE = DATA_PATH.name
-    FILENUM = re.search(r"-(\d{5})-", FILE)
-    if FILENUM is not None:
-        FILENUM = FILENUM.group()[1:-1]
-        print(f"Processing file: {FILE}.")
-    else:
-        print(f"File name error: {FILE}.")
-        return
-
-    fileprefix = 'Waymo'
-    dataset = tf.data.TFRecordDataset(DATA_DIR / FILE, compression_type='')
-
-    all_data = []
-    all_fileprefixes = itertools.repeat(fileprefix)
-    all_filenums = itertools.repeat(FILENUM)
-    all_files = itertools.repeat(FILE)
-    for data in dataset.as_numpy_iterator():
-        all_data.append(data)
-
-    pool = Pool(args.n_jobs)
-    pool.starmap(process_scenario, zip(all_data, all_fileprefixes, all_filenums, all_files))
-    pool.close()
-
-
 if __name__ == '__main__':
-    # RESULT_TIME = time.strftime("%Y-%m-%d-%H_%M", time.localtime())
-    # RESULT_DIR = ROOT / "results" / RESULT_TIME
     RESULT_DIR = ROOT / "results" / RESULTS_DIR
     if not RESULT_DIR.exists():
         RESULT_DIR.mkdir(exist_ok=True, parents=True)
     time_start = time.perf_counter()
 
+    all_data = []
+    all_fileprefixes = []
+    all_filenums = []
+    all_files = []
+
     for data_path in DATA_DIR_WALK:
-        print("Processing ", data_path)
-        process_file(data_path)
+        print("Checking ", data_path)
+        FILE = data_path.name
+        FILENUM = re.search(r"-(\d{5})-", FILE)
+        if FILENUM is not None:
+            FILENUM = FILENUM.group()[1:-1]
+            print(f"Appending file: {FILE} to list for processing.")
+        else:
+            print(f"File name error: {FILE}.")
+            continue
+
+        fileprefix = 'Waymo'
+        dataset = tf.data.TFRecordDataset(DATA_DIR / FILE, compression_type='')
+
+        file_data = []
+        for data in dataset.as_numpy_iterator():
+            file_data.append(data)
+        num_scenes = len(file_data)
+        all_data.extend(file_data)
+        all_fileprefixes.extend(itertools.repeat(fileprefix, num_scenes))
+        all_filenums.extend(itertools.repeat(FILENUM, num_scenes))
+        all_files.extend(itertools.repeat(FILE, num_scenes))
+
+    pool = Pool(args.n_jobs)
+    pool.starmap(process_scenario, zip(all_data, all_fileprefixes, all_filenums, all_files))
+    pool.close()
 
     time_end = time.perf_counter()
     print(f"Time cost: {time_end - time_start:.2f}s.RESULT_DIR: {RESULT_DIR}")
