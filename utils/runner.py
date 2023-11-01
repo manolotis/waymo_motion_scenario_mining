@@ -41,7 +41,7 @@ DATA_DIR_WALK = DATA_DIR.iterdir()
 
 def process_scenario(data, fileprefix, FILENUM, FILE):
     try:
-        parsed = tf.io.parse_single_example(data, features_description)
+        parsed = tf.io.parse_single_example(data, features_description) # ToDo: not the most efficient currently
         scene_id = parsed['scenario/id'].numpy().item().decode("utf-8")
         print(f"Processing scene: {scene_id} | Filenum: {FILENUM}.")
         result_filename = f'{fileprefix}_{FILENUM}_{scene_id}_tag.json'
