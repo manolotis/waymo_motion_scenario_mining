@@ -117,26 +117,6 @@ for sc in scenario_catalog.keys():
         }
 
 
-# sc2types = {
-#     "SC1": {
-#         "host_type": 1,
-#         "guest_type": 1,
-#     },
-#     "SC2": {
-#         "host_type": 1,
-#         "guest_type": 1,
-#     },
-#     "SC7": {
-#         "host_type": 1,
-#         "guest_type": 2,
-#     },
-#     "SC13": {
-#         "host_type": 1,
-#         "guest_type": 3,
-#     }
-# }
-
-
 def get_scene_scenarios(json_path):
     with open(json_path, "r") as f:
         scene_scenarios = json.load(f)
@@ -144,7 +124,8 @@ def get_scene_scenarios(json_path):
     return scene_scenarios
 
 
-for sc in ['SC21', 'SC22', 'SC19', 'SC20'] + sorted(scenario_categories, reverse=True):
+# for sc in ['SC21', 'SC22', 'SC19', 'SC20'] + sorted(scenario_categories, reverse=True):
+for sc in ['SC20'] + sorted(scenario_categories, reverse=True):
     print("Processing", sc)
     jsons = os.listdir(RESULTS_DIR / sc)
 
@@ -218,7 +199,6 @@ for sc in ['SC21', 'SC22', 'SC19', 'SC20'] + sorted(scenario_categories, reverse
                                 guest_text="", cbo="vertical")
 
             plt.tight_layout()
-            # plt.savefig(FIG_PATH / f"{sc}_{scene_id}_h{host_id}_{host_idx}_g{guest_id}_{guest_idx}.png", dpi=300)
             # plt.show()
 
             # ani.save(filename=FIG_PATH, writer="pillow", progress_callback = lambda i, n: print(f'Saving frame {i}/{n}'), dpi=200)

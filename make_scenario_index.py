@@ -24,7 +24,7 @@ RESULT_PATH_HOST = RESULT_DIR / Path("testing_host.json")
 SCs_DIR = ROOT / SCs_DIR
 
 scenario_index_guest = {}
-scenario_index_host = {} #
+scenario_index_host = {}  #
 """
 scenario_index = {
     "scene_id" = {
@@ -32,6 +32,10 @@ scenario_index = {
     }
 }
 """
+
+scenario_timestamp_1 = 0
+scenario_timestamp_2 = 0
+scenario_timestamp_5 = 0
 
 for scenario_category_path in track(SCs_DIR.iterdir()):
     scenario_category = scenario_category_path.name
@@ -49,9 +53,18 @@ for scenario_category_path in track(SCs_DIR.iterdir()):
             scenario_index_host[scene_id] = {}
 
         for i, scenario_info in result_dict.items():
-            # print(scenario_info)
+            time_stamp_len = len(scenario_info['time_stamp'])
+            if time_stamp_len <= 1:
+                scenario_timestamp_1 += 1
+            if time_stamp_len <= 2:
+                scenario_timestamp_2 += 1
+            if time_stamp_len <= 5:
+                scenario_timestamp_5 += 5
+
+            # For now, skip SCs that are only detected at 1 time stamp. More often than not they are noisy
+
             if scenario_info["guest_actor_id"] is None or scenario_info["guest_actor_id"] == 'None':
-                #guest actor is none in this scenario. Add to host index
+                # guest actor is none in this scenario. Add to host index
                 host_actor_id = int(scenario_info["host_actor_id"])  # ID in waymo
 
                 if host_actor_id not in scenario_index_host[scene_id]:
@@ -60,7 +73,7 @@ for scenario_category_path in track(SCs_DIR.iterdir()):
                 if scenario_category not in scenario_index_host[scene_id][host_actor_id]:
                     scenario_index_host[scene_id][host_actor_id].append(scenario_category)
             else:
-                guest_actor_id = int(scenario_info["guest_actor_id"]) # ID in waymo
+                guest_actor_id = int(scenario_info["guest_actor_id"])  # ID in waymo
 
                 if guest_actor_id not in scenario_index_guest[scene_id]:
                     scenario_index_guest[scene_id][guest_actor_id] = []
@@ -72,3 +85,7 @@ with open(RESULT_PATH_GUEST, "w") as f:
     json.dump(scenario_index_guest, f)
 with open(RESULT_PATH_HOST, "w") as f:
     json.dump(scenario_index_host, f)
+
+print("# Scenarios with 1 or less timestamps: ", scenario_timestamp_1)
+print("# Scenarios with 2 or less timestamps: ", scenario_timestamp_2)
+print("# Scenarios with 5 or less timestamps: ", scenario_timestamp_5)
