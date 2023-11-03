@@ -4,6 +4,7 @@ import argparse
 from logger.logger import *
 from rich.progress import track
 from scenario_categorizer import ScenarioCategorizer
+from parameters.scenario_categories import scenario_catalog
 import time
 from multiprocessing import Pool
 import itertools
@@ -19,7 +20,8 @@ args = parser.parse_args()
 RESULT_DIR = ROOT / "results" / args.result_time
 file_prefix = "Waymo"
 
-sc = ["SC1", "SC7", "SC13"]
+# sc = ["SC1", "SC7", "SC2", "SC13"]
+sc = list(scenario_catalog.keys())
 
 
 def process_result_file(result_file, SC_ID):

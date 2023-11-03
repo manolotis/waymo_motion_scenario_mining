@@ -10,6 +10,7 @@ from plotting_scenarios import get_color_map, set_scaling_3
 from helpers.diverse_plot import plot_road_lines
 from rich.progress import track
 import matplotlib.animation as animation
+from parameters.scenario_categories import scenario_catalog
 
 ROOT = Path.cwd().parent
 # ToDo: parametarize
@@ -39,7 +40,6 @@ def plot_scenario(parsed, host_actor, guest_actor, time, xlim, ylim, fraction: f
     ego_idx = np.argwhere(parsed['state/is_sdc'].numpy() > 0).flatten()[0]
     ego_id = parsed['state/id'].numpy()[ego_idx]
 
-
     nrows, ncols = 1, 1
     fig, ax = plt.subplots(nrows, ncols, figsize=(10, 10))
     ax.set_xlabel('x (m)', fontdict=font1)
@@ -63,11 +63,10 @@ def plot_scenario(parsed, host_actor, guest_actor, time, xlim, ylim, fraction: f
         bboxes = []
 
         for actor in all_actors:
-            if actor.id == host_actor.id or actor.id == guest_actor.id:
+            if actor.id == host_actor.id or (guest_actor is not None and actor.id == guest_actor.id):
                 continue
 
             visible = False
-
 
             if actor.id == ego_id:
                 bbox = get_bbox(ax, fig, actor, time, cbo, t, color="tab:blue")
@@ -86,7 +85,8 @@ def plot_scenario(parsed, host_actor, guest_actor, time, xlim, ylim, fraction: f
                 bboxes.extend(bbox)
 
         bboxes.extend(get_bbox(ax, fig, host_actor, time, cbo, t, color="tab:orange"))
-        bboxes.extend(get_bbox(ax, fig, guest_actor, time, cbo, t, color="tab:orange"))
+        if guest_actor is not None:
+            bboxes.extend(get_bbox(ax, fig, guest_actor, time, cbo, t, color="tab:orange"))
 
         artists.append(road + bboxes)
         # plt.show()
@@ -97,20 +97,44 @@ def plot_scenario(parsed, host_actor, guest_actor, time, xlim, ylim, fraction: f
 
 
 scenario_categories = os.listdir(RESULTS_DIR)
-sc2types = {
-    "SC1": {
-        "host_type": 1,
-        "guest_type": 1,
-    },
-    "SC7": {
-        "host_type": 1,
-        "guest_type": 2,
-    },
-    "SC13": {
-        "host_type": 1,
-        "guest_type": 3,
-    }
+
+actor_string2actor_int = {
+    "vehicle": 1,
+    "pedestrian": 2,
+    "cyclist": 3,
 }
+
+sc2types = {}
+for sc in scenario_catalog.keys():
+    sc2types[sc] = {
+        "host_type": actor_string2actor_int[scenario_catalog[sc].host_actor_type[0]],
+        # !watch out, this only works if 1 actor type specified
+    }
+    if len(scenario_catalog[sc].guest_actor_type) > 0:
+        sc2types[sc] = {
+            "guest_type": actor_string2actor_int[scenario_catalog[sc].guest_actor_type[0]]
+            # !watch out, this only works if 1 actor type specified
+        }
+
+
+# sc2types = {
+#     "SC1": {
+#         "host_type": 1,
+#         "guest_type": 1,
+#     },
+#     "SC2": {
+#         "host_type": 1,
+#         "guest_type": 1,
+#     },
+#     "SC7": {
+#         "host_type": 1,
+#         "guest_type": 2,
+#     },
+#     "SC13": {
+#         "host_type": 1,
+#         "guest_type": 3,
+#     }
+# }
 
 
 def get_scene_scenarios(json_path):
@@ -120,7 +144,7 @@ def get_scene_scenarios(json_path):
     return scene_scenarios
 
 
-for sc in sorted(scenario_categories, reverse=True):
+for sc in ['SC21', 'SC22', 'SC19', 'SC20'] + sorted(scenario_categories, reverse=True):
     print("Processing", sc)
     jsons = os.listdir(RESULTS_DIR / sc)
 
@@ -139,27 +163,35 @@ for sc in sorted(scenario_categories, reverse=True):
         for scenario_index, scenario_info in scene_scenarios.items():
             print(f"processing {json_file}, scenario index {scenario_index}")
 
-            host_id, guest_id = int(scenario_info["host_actor"]), int(scenario_info["guest_actor"])
-            host_idx, guest_idx = int(scenario_info["host_actor_id"]), int(scenario_info["guest_actor_id"])
+            host_id = int(scenario_info["host_actor"])
+            host_idx = int(scenario_info["host_actor_id"])
             host_actor, _ = actor_creator(sc2types[sc]["host_type"], host_id, parsed)
-            guest_actor, _ = actor_creator(sc2types[sc]["guest_type"], guest_id, parsed)
-
             valid_times_host = np.argwhere(host_actor.validity > 0).flatten()
-            valid_times_guest = np.argwhere(guest_actor.validity > 0).flatten()
             valid_x_host = host_actor.kinematics['x'][valid_times_host]
             valid_y_host = host_actor.kinematics['y'][valid_times_host]
-            valid_x_guest = guest_actor.kinematics['x'][valid_times_guest]
-            valid_y_guest = guest_actor.kinematics['y'][valid_times_guest]
 
-            valid_times_both = set(list(valid_times_host) + list(valid_times_guest))
-            times = np.array(sorted(valid_times_both))
-
-            # delta = 50
-
-            x_min = np.concatenate([valid_x_host, valid_x_guest]).min() - 5
-            x_max = np.concatenate([valid_x_host, valid_x_guest]).max() + 5
-            y_min = np.concatenate([valid_y_host, valid_y_guest]).min() - 5
-            y_max = np.concatenate([valid_y_host, valid_y_guest]).max() + 5
+            try:
+                guest_id = int(scenario_info["guest_actor"])
+                guest_idx = int(scenario_info["guest_actor_id"])
+                guest_actor, _ = actor_creator(sc2types[sc]["guest_type"], guest_id, parsed)
+                valid_times_guest = np.argwhere(guest_actor.validity > 0).flatten()
+                valid_x_guest = guest_actor.kinematics['x'][valid_times_guest]
+                valid_y_guest = guest_actor.kinematics['y'][valid_times_guest]
+                valid_times_both = set(list(valid_times_host) + list(valid_times_guest))
+                times = np.array(sorted(valid_times_both))
+                x_min = np.concatenate([valid_x_host, valid_x_guest]).min() - 5
+                x_max = np.concatenate([valid_x_host, valid_x_guest]).max() + 5
+                y_min = np.concatenate([valid_y_host, valid_y_guest]).min() - 5
+                y_max = np.concatenate([valid_y_host, valid_y_guest]).max() + 5
+            except ValueError:  # no guest actor
+                guest_id = None
+                guest_idx = None
+                guest_actor = None
+                times = np.array(sorted(list(valid_times_host)))
+                x_min = valid_x_host.min() - 5
+                x_max = valid_x_host.max() + 5
+                y_min = valid_y_host.min() - 5
+                y_max = valid_y_host.max() + 5
 
             x_range = x_max - x_min
             y_range = y_max - y_min

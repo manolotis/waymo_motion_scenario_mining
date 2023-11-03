@@ -19,10 +19,12 @@ RESULT_DIR = ROOT / Path("results/index/")
 if not os.path.exists(RESULT_DIR):
     os.makedirs(RESULT_DIR)
 
-RESULT_PATH = RESULT_DIR / Path("testing.json")
+RESULT_PATH_GUEST = RESULT_DIR / Path("testing_guest.json")
+RESULT_PATH_HOST = RESULT_DIR / Path("testing_host.json")
 SCs_DIR = ROOT / SCs_DIR
 
-scenario_index = {}
+scenario_index_guest = {}
+scenario_index_host = {} #
 """
 scenario_index = {
     "scene_id" = {
@@ -40,17 +42,33 @@ for scenario_category_path in track(SCs_DIR.iterdir()):
         result_dict = json.load(open(scenarios_json, 'r'))
         file_prefix = scenarios_json.name.split("_")[0]
 
-        if scene_id not in scenario_index:
-            scenario_index[scene_id] = {}
+        if scene_id not in scenario_index_guest:
+            scenario_index_guest[scene_id] = {}
+
+        if scene_id not in scenario_index_host:
+            scenario_index_host[scene_id] = {}
 
         for i, scenario_info in result_dict.items():
-            guest_actor_id = int(scenario_info["guest_actor_id"]) # ID in waymo
+            # print(scenario_info)
+            if scenario_info["guest_actor_id"] is None or scenario_info["guest_actor_id"] == 'None':
+                #guest actor is none in this scenario. Add to host index
+                host_actor_id = int(scenario_info["host_actor_id"])  # ID in waymo
 
-            if guest_actor_id not in scenario_index[scene_id]:
-                scenario_index[scene_id][guest_actor_id] = []
+                if host_actor_id not in scenario_index_host[scene_id]:
+                    scenario_index_host[scene_id][host_actor_id] = []
 
-            if scenario_category not in scenario_index[scene_id][guest_actor_id]:
-                scenario_index[scene_id][guest_actor_id].append(scenario_category)
+                if scenario_category not in scenario_index_host[scene_id][host_actor_id]:
+                    scenario_index_host[scene_id][host_actor_id].append(scenario_category)
+            else:
+                guest_actor_id = int(scenario_info["guest_actor_id"]) # ID in waymo
 
-with open(RESULT_PATH, "w") as f:
-    json.dump(scenario_index, f)
+                if guest_actor_id not in scenario_index_guest[scene_id]:
+                    scenario_index_guest[scene_id][guest_actor_id] = []
+
+                if scenario_category not in scenario_index_guest[scene_id][guest_actor_id]:
+                    scenario_index_guest[scene_id][guest_actor_id].append(scenario_category)
+
+with open(RESULT_PATH_GUEST, "w") as f:
+    json.dump(scenario_index_guest, f)
+with open(RESULT_PATH_HOST, "w") as f:
+    json.dump(scenario_index_host, f)
