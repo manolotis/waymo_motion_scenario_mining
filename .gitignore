@@ -5,7 +5,9 @@
 try*
 __pycache__
 /results
+/results_old
 /figures
+/figures_old
 /fig_graduation
 /notes
 /.vscode

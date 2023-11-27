@@ -62,7 +62,7 @@ for scenario_category_path in track(SCs_DIR.iterdir()):
                 scenario_timestamp_5 += 5
 
             # For now, skip SCs that are only detected at 1 time stamp. More often than not they are noisy
-            if time_stamp_len <= 1:
+            if time_stamp_len <= 1: # ToDo
                 continue
 
             if scenario_info["guest_actor_id"] is None or scenario_info["guest_actor_id"] == 'None':
