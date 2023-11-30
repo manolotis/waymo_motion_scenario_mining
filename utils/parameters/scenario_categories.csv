@@ -1,0 +1,833 @@
+SC1,General Info,ID,,SC1
+,,description,,Steering left
+,,source,,CETRAN SC1 & SC2
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,Not distinguishing between turning and maneuvering a bend. Does not include swerving
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC2,General Info,ID,,SC2
+,,description,,Steering left
+,,source,,CETRAN SC1 & SC3
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"Not distinguishing between turning and maneuvering a bend. Does not include swerving. Identical to SC1, but turning right"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC3,General Info,ID,,SC3
+,,description,,Driving straight
+,,source,,CETRAN SC4
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-Cannot specify road_layout straight
+-Scenario identified any timestep vehicle is going straight, so even if it turns briefly after that it would be identified as driving straight
+-Would be fixed with road_layout tags, or supporting that other tags should not happen later (e.g. turning)"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC4,General Info,ID,,SC4
+,,description,,Vehicle backing up
+,,source,,CETRAN SC16
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-Cannot support ""same lane"" definition yet.
+-Cannot support ""backing up into ego"" yet. If we use ""potential collision"", ther would be a lot of false positives with other paked or stopped vehicles"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,reversing
+,,,Lateral activity,"swerving left, turning left, going straight, turning right, swerving right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC5,General Info,ID,,SC5
+,,description,,Oncoming vehicle
+,,source,,CETRAN SC20
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-Cannot support ""same lane"" definition yet
+-Likely resulting in a lot of FPs without the same lane tag"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC6,General Info,ID,,SC6
+,,description,,Ego vehicle approaching red traffic light
+,,source,,CETRAN SC23
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for road layout specification
+-No explicity support for approaching the traffic light itself, but can detect if vehicle staying/approaching or leaving controlled lane, and state of traffic line controlling this lane"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, approaching"
+,,,Road type,controlled_lane
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,"Arrow stop, Stop, Flashing stop"
+SC7,General Info,ID,,SC7
+,,description,,Ego vehicle approaching green traffic light
+,,source,,CETRAN SC24
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for road layout specification
+-No explicity support for approaching the traffic light itself, but can detect if vehicle staying/approaching or leaving controlled lane, and state of traffic line controlling this lane"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, approaching"
+,,,Road type,controlled_lane
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,"Arrow go, Go"
+SC8,General Info,ID,,SC8
+,,description,,Ego vehicle approaching amber traffic light
+,,source,,CETRAN SC25
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for road layout specification
+-No explicity support for approaching the traffic light itself, but can detect if vehicle staying/approaching or leaving controlled lane, and state of traffic line controlling this lane"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, approaching"
+,,,Road type,controlled_lane
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,"Arrow cauton, Caution, Flashing caution"
+SC9,General Info,ID,,SC9
+,,description,,Vehicle running red traffic light
+,,source,,CETRAN SC26
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for road layout specification
+-No explicity support for approaching the traffic light itself, but can detect if vehicle staying/approaching or leaving controlled lane, and state of traffic line controlling this lane
+-Flashing red is not included since it's equivalent to stop sign"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,leaving
+,,,Road type,controlled_lane
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,"Arrow stop, Stop"
+SC10,General Info,ID,,SC10
+,,description,,Oncoming vehicle turns right at signalized junction
+,,source,,CETRAN SC27
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction""
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC11,General Info,ID,,SC11
+,,description,,Ego vehicle turns right with oncoming vehicle at signalized junction
+,,source,,CETRAN SC28
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction""
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC12,General Info,ID,,SC12
+,,description,,Oncoming vehicle turns right at non-signalized junction
+,,source,,CETRAN SC29
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction"", so it would be the same as SC10 (CETRAN SC27)
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC13,General Info,ID,,SC13
+,,description,,Ego vehicle turns right with oncoming vehicle at non-signalized junction
+,,source,,CETRAN SC30
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction"", so it would be the same as SC11 (CETRAN SC28)
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC14,General Info,ID,,SC14
+,,description,,Ego straight with vehicle from left at non-signalized junction
+,,source,,CETRAN SC31
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction""
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,"left, front"
+,,,Inter-actor heading,right
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,"going straight, turning left, turning right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC15,General Info,ID,,SC15
+,,description,,Vehicle straight with ego from left at non-signalized junction
+,,source,,CETRAN SC32
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction""
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,"going straight, turning left, turning right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,"right, front"
+,,,Inter-actor heading,left
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC16,General Info,ID,,SC16
+,,description,,Undertaking at left turn at non-signalized junction
+,,source,,CETRAN SC36
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No explicit support for specifying ""signalized junction""
+-No explicit support for undertaking. Would combine turning left + potential collision
+-Probably quite a few FPs  when using ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity, turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,"estimated collision, close proximity"
+,,,Inter-actor position,left
+,,,Inter-actor heading,same
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC17,General Info,ID,,SC17
+,,description,,Jaywalking
+,,source,,CETRAN SC39
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-No explicit support for specfying that pedestrian is not crossing at a zebra crossing
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,"left, right"
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, leaving, approaching"
+,,,Road type,"freeway, surface_street, brokenSingleWhite, brokenSingleYellow, brokenDoubleYellow, cross_walk"
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC18,General Info,ID,,SC18
+,,description,,Pedestrian crossing at zebra crossing
+,,source,,CETRAN SC40
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-No support for specifying there are no traffic lights
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,"left, right"
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, leaving, approaching"
+,,,Road type,cross_walk
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC19,General Info,ID,,SC19
+,,description,,Zebra crossing
+,,source,,CETRAN SC41
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-No support for specifying there are no traffic lights
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,"staying, entering, leaving, approaching"
+,,,Road type,cross_walk
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC20,General Info,ID,,SC20
+,,description,,Pedestrian at left turn at junction
+,,source,,CETRAN SC46 SC47
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for (non)signalized junction. Would be same SC46 and SC47
+-If vehicle and pedestrian opposite direction, likely many FPs for potential collisions
+-To do propely, we need junction detection, so we can specify we only care if both Vehicle and ped. are on the same junction"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,left
+,,,Inter-actor heading,"same, opposite"
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC21,General Info,ID,,SC21
+,,description,,Pedestrian at right turn at junction
+,,source,,CETRAN SC49 SC50
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for (non)signalized junction. Would be same SC46 and SC47
+-If vehicle and pedestrian opposite direction, likely many FPs for potential collisions
+-To do propely, we need junction detection, so we can specify we only care if both Vehicle and ped. are on the same junction"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning right
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,left
+,,,Inter-actor heading,"same, opposite"
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC22,General Info,ID,,SC22
+,,description,,Cyclist crossing from left side at junction
+,,source,,CETRAN SC51 53
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for (non)signalized junction. Would be same as SC53
+-Until we can detect junctions, will use ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,"left, front"
+,,,Inter-actor heading,right
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC23,General Info,ID,,SC23
+,,description,,Cyclist crossing from right side at junction
+,,source,,CETRAN SC52 54
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for (non)signalized junction. Would be same as SC53
+-Until we can detect junctions, will use ""potential collision"""
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,"right, front"
+,,,Inter-actor heading,left
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC24,General Info,ID,,SC24
+,,description,,Ego vehicle approaching cyclist riding in the same direction
+,,source,,CETRAN SC55
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for ""approaching"" another actor
+-No support for being on the same lane
+-Definition would be practically identical to SC56, only with potential collision"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,same
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC25,General Info,ID,,SC25
+,,description,,Ego vehicle driving alongside a cyclist
+,,source,,CETRAN SC56
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for ""approaching"" another actor
+-No support for being on the same lane
+-Definition would be practically identical to SC55, only with close proximity"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,close proximity
+,,,Inter-actor position,-
+,,,Inter-actor heading,same
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC26,General Info,ID,,SC26
+,,description,,Ego vehicle approaching cyclist riding in opposite direction
+,,source,,CETRAN SC57
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"-No support for ""same lane"". Replace by potential collision
+-Likely yield many FPs"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,"estimated collision, close proximity"
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC27,General Info,ID,,SC27
+,,description,,Cyclist at left turn at junction
+,,source,,CETRAN SC58 SC59
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"Very similar to SC46 and SC 47, but with cyclist instead of pedestrian"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,left
+,,,Inter-actor heading,"same, opposite"
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC28,General Info,ID,,SC28
+,,description,,Cyclist at right turn at junction
+,,source,,CETRAN SC61 SC62
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,"Very similar to SC46 and SC 47, but with cyclist instead of pedestrian"
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,right
+,,,Inter-actor heading,"same, opposite"
+,Guest actor,Guest actor type,,cyclist
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC29,General Info,ID,,SC29
+,,description,,Car to ped reverse moving
+,,source,,EuroNCAP AEB VRU test protocol v44 - Sec. 7.2.6
+,,source_file,,euro-ncap-aeb-lss-vru-test-protocol-v44.pdf
+,,notes,,-
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,reversing
+,,,Lateral activity,"going straight, turning left, turning right, swerving left, swerving right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,"estimated collision, close proximity"
+,,,Inter-actor position,back
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC30,General Info,ID,,SC30
+,,description,,Car to ped reverse stationary
+,,source,,EuroNCAP AEB VRU test protocol v44 - Sec. 7.2.6
+,,source_file,,euro-ncap-aeb-lss-vru-test-protocol-v44.pdf
+,,notes,,-
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,reversing
+,,,Lateral activity,"going straight, turning left, turning right, swerving left, swerving right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,pedestrian
+,,Guest actor tags,Longitudinal activity,standing still
+,,,Lateral activity,"going straight, turning left, turning right, swerving left, swerving right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,"estimated collision, close proximity"
+,,,Inter-actor position,back
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC31,General Info,ID,,SC31
+,,description,,Car-to-Car Front Turn-Across-Path 
+,,source,,EuroNCAP AEB C2C Sec. 8.2.3
+,,source_file,,euro-ncap-aeb-c2c-test-protocol-v42.pdf
+,,notes,,-
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,turning left
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,estimated collision
+,,,Inter-actor position,front
+,,,Inter-actor heading,opposite
+,Guest actor,Guest actor type,,vehicle
+,,Guest actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,going straight
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SC32,General Info,ID,,SC32
+,,description,,Steering left/right
+,,source,,CETRAN SC1 & SC2 & SC3
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,Not distinguishing between turning and maneuvering a bend. Does not include swerving
+,Host actor,Host actor type,,vehicle
+,,Host actor tags,Longitudinal activity,"accelerating, cruising, decelerating"
+,,,Lateral activity,"turning left, turning right"
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SCX,General Info,ID,,SCX
+,,description,,-
+,,source,,-
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-
+,Host actor,Host actor type,,-
+,,Host actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SCX,General Info,ID,,SCX
+,,description,,-
+,,source,,-
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-
+,Host actor,Host actor type,,-
+,,Host actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-
+SCX,General Info,ID,,SCX
+,,description,,-
+,,source,,-
+,,source_file,,VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf
+,,notes,,-
+,Host actor,Host actor type,,-
+,,Host actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,Guest actor,Guest actor type,,-
+,,Guest actor tags,Longitudinal activity,-
+,,,Lateral activity,-
+,,,Road relation,-
+,,,Road type,-
+,,,Inter-actor relation,-
+,,,Inter-actor position,-
+,,,Inter-actor heading,-
+,"Environment 
+tag",Light state,,-

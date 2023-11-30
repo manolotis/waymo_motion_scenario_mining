@@ -8,6 +8,7 @@ from parameters.scenario_categories import scenario_catalog
 import time
 from multiprocessing import Pool
 import itertools
+import shutil
 
 # working directory
 ROOT = Path(__file__).parents[1]
@@ -15,6 +16,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--result_time', type=str, required=True, help='result time to be categorized, e.g., 02-28-16_35')
 parser.add_argument('--eval_mode', action="store_true", help='[bool] True for evaluation mode')
 parser.add_argument('--n_jobs', type=int, default=8, required=False, help='Number of processes')
+parser.add_argument('--remake', nargs='+', default=[], required=False, help='SCs to remake (overrides)')
+
 args = parser.parse_args()
 
 RESULT_DIR = ROOT / "results" / args.result_time
@@ -47,7 +50,10 @@ def process_result_file(result_file, SC_ID):
 
 def categorize_all_sc(result_dir):
     for SC_ID in track(sc, description="Categorizing..."):
-        print(SC_ID)
+        if len(args.remake) > 0 and SC_ID not in args.remake:
+            continue
+
+        print(f"categorizing {SC_ID}...")
         pool = Pool(args.n_jobs)
         pool.starmap(process_result_file, zip(result_dir.iterdir(), itertools.repeat(SC_ID)))
         pool.close()

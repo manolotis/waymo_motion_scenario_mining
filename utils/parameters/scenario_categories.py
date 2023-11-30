@@ -483,7 +483,7 @@ class SC12(SCBasis):
 class SC13(SCBasis):
     #####   general info    #####
     SC_ID = "SC13"
-    description = "Oncoming vehicle turns right at non-signalized junction"
+    description = "Ego vehicle turns right with oncoming vehicle at non-signalized junction"
     source = "CETRAN SC30"
     source_file = "VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf"
     notes = '''
@@ -535,7 +535,7 @@ class SC14(SCBasis):
         "road_type": [],
         "inter_actor_relation": ['estimated collision'],
         "inter_actor_position": ['left', 'front'],
-        'inter_actor_heading': ['opposite', 'left'],
+        'inter_actor_heading': ['right'],
     }
     #####   guest actor  #####
     guest_actor_type = ['vehicle']
@@ -571,7 +571,7 @@ class SC15(SCBasis):
         "road_type": [],
         "inter_actor_relation": ['estimated collision'],
         "inter_actor_position": ['right', 'front'],
-        'inter_actor_heading': ['opposite', 'right'],
+        'inter_actor_heading': ['left'],
     }
     #####   guest actor  #####
     guest_actor_type = ['vehicle']
@@ -608,7 +608,7 @@ class SC16(SCBasis):
         "road_type": [],
         "inter_actor_relation": ['estimated collision', 'close proximity'],
         "inter_actor_position": ['left'],
-        'inter_actor_heading': ['same', 'left'],
+        'inter_actor_heading': ['same'],
     }
     #####   guest actor  #####
     guest_actor_type = ['vehicle']
@@ -922,7 +922,7 @@ class SC25(SCBasis):
     notes = '''
     -No support for "approaching" another actor
 -No support for being on the same lane
--Definition would be practically identical to SC56, only with potential collision
+-Definition would be practically identical to SC55, only with close proximity
     '''
     #####   host actor  #####
     host_actor_type = ['vehicle']
@@ -967,7 +967,7 @@ class SC26(SCBasis):
         "la_act": ['going straight'],
         "road_relation": [],
         "road_type": [],
-        "inter_actor_relation": ['estimated collision'],
+        "inter_actor_relation": ['estimated collision', 'close proximity'],
         "inter_actor_position": ['front'],
         'inter_actor_heading': ['opposite'],
     }
@@ -1159,6 +1159,41 @@ class SC31(SCBasis):
     }
 
 
+
+@dataclass
+class SC32(SCBasis):
+    #####   general info    #####
+    SC_ID = "SC32"
+    description = "Steering left/right"
+    source = "CETRAN SC1 & SC2 & SC3"
+    source_file = "VMAD-SG1-11-03 (NL) Scenario Categories_v1.7.pdf"
+    notes = '''
+    Not distinguishing between turning and maneuvering a bend. Does not include swerving
+    '''
+    #####   host actor  #####
+    host_actor_type = ['vehicle']
+    host_actor_tag = {
+        "lo_act": ['accelerating', 'cruising', 'decelerating'],
+        "la_act": ['turning left', 'turning right'],
+        "road_relation": [],
+        "road_type": [],
+        "inter_actor_relation": [],
+        "inter_actor_position": [],
+        'inter_actor_heading': [],
+    }
+    #####   guest actor  #####
+    guest_actor_type = []
+    guest_actor_tag = {
+        "lo_act": [],
+        "la_act": [],
+        "road_relation": [],
+        "road_type": [],
+        "inter_actor_relation": [],
+        "inter_actor_position": [],
+        'inter_actor_heading': [],
+    }
+
+
 scenario_catalog = {
     'SC1': SC1,
     'SC2': SC2,
@@ -1191,4 +1226,5 @@ scenario_catalog = {
     'SC29': SC29,
     'SC30': SC30,
     'SC31': SC31,
+    'SC32': SC32,
 }
